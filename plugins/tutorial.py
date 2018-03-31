@@ -1,12 +1,19 @@
 from disco.bot import Plugin
 
-from collections import defaultdict
-
+from .game_object import WordGameObject
 
 class TutorialPlugin(Plugin):
 
     def load(self, ctx):
-        self.players_playing = defaultdict(set)
+        self.games = {}
+
+    @Plugin.command('game')
+    def command_test_game(self, event):
+        channel_id = event.msg.channel_id
+        self.games.update({channel_id: WordGameObject(
+            channel_id, event.msg.channel.name)})
+        print(self.games)
+        event.msg.reply("Game created with {}".format(self.games[channel_id]))
 
     @Plugin.command('inc')
     def command_increment(self, event):

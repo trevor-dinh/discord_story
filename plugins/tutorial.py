@@ -7,12 +7,14 @@ class TutorialPlugin(Plugin):
     def load(self, ctx):
         self.games = {}
 
-    @Plugin.command('game')
+    @Plugin.command('testgame')
     def command_test_game(self, event):
         channel_id = event.msg.channel_id
         self.games.update({channel_id: WordGameObject(
             channel_id, event.msg.channel.name)})
         print(self.games)
+        self.games[channel_id].playing.append(event.msg.author)
+        print(self.games[channel_id].playing)
         event.msg.reply("Game created with {}".format(self.games[channel_id]))
 
     @Plugin.command('inc')
@@ -34,6 +36,10 @@ class TutorialPlugin(Plugin):
     def on_echo_command(self, event, content):
         #print(content)
         #print(event)
+        if content[0] == '!':
+            event.msg.reply(content[1:])
+            event.msg.reply("Nice try, but please don't make the bot do commands with echo. They have feelings too.")
+            return
         event.msg.reply(content)
 
     @Plugin.command('add', '<a:int> <b:int>', group='math')

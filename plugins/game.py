@@ -10,6 +10,11 @@ class WordStoryGame(Plugin):
     @Plugin.command('newgame')
     def create_new_game(self, event):
         channel_id = event.msg.channel_id
+        if channel_id in self.games:
+            event.msg.reply(
+                "A game in this channel already exists!" +
+                "Use !cleargame to reset and try again")
+            return
         self.games.update({
             event.msg.channel_id: WordGameObject(
                 channel_id, event.msg.channel.name)})
@@ -57,8 +62,12 @@ class WordStoryGame(Plugin):
             this_game = self.games[event.msg.channel_id]
             if this_game._count_players() < 2:
                 event.msg.reply("Not enough players!")
-            event.msg.reply(
-                "Developers haven't figured it out yet sorry")
+                return
+            this_game.game_started = True
+            this_game._set_turn_order()
+            this_game._change_turn()
+            event.msg.reply("Game has started. It is now {}'s turn".format(
+                this_game.current_turn.mention))
 
     @Plugin.command('listplayers')
     def command_list_players(self, event):
@@ -68,7 +77,5 @@ class WordStoryGame(Plugin):
                 self.games[event.msg.channel_id]._get_players())))
         else:
             event.msg.reply("No game created for this channel!")
-
-
 
 

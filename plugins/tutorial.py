@@ -56,6 +56,6 @@ class TutorialPlugin(Plugin):
 
     @Plugin.command('whatchannel')
     def command_get_channel(self, event):
-        event.msg.reply("You are in " + 
-            str(event.msg.channel.id) + 
-            " aka " + event.msg.channel.name)
+        event.msg.reply("You are in " +
+        str(event.msg.channel.id) +
+        " aka " + event.msg.channel.name)

@@ -78,4 +78,8 @@ class WordStoryGame(Plugin):
         else:
             event.msg.reply("No game created for this channel!")
 
+    @Plugin.command('word', '<content:str>')
+    def command_enter_word(self,event,content):
+        event.msg.reply("YA YA HEY")
+
 

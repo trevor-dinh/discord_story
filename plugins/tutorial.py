@@ -59,3 +59,17 @@ class TutorialPlugin(Plugin):
         event.msg.reply("You are in " +
         str(event.msg.channel.id) +
         " aka " + event.msg.channel.name)
+    tags = {}
+
+    @Plugin.command('tag', '<name:str> [value:str...]')
+    def on_tag_command(self, event, name, value=None):
+        if value:
+            self.tags[name] = value
+            event.msg.reply(':ok_hand: created tag `{}`'.format(name))
+        else:
+            if name in self.tags.keys():
+                return event.msg.reply(self.tags[name])
+            else:
+                return event.msg.reply('Unknown tag: `{}`'.format(name))
+
+ 

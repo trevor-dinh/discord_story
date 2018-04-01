@@ -100,6 +100,7 @@ class WordStoryGame(Plugin):
                     ' '.join(word for word in this_game.current_sentence))
                 print(this_game.story)
                 this_game._clear_current_sentence()
+                #handle when story has 64 sentences
 
             this_game._change_turn()
             event.msg.reply("It's now your turn, {}".format(
@@ -119,22 +120,38 @@ class WordStoryGame(Plugin):
             channel_id) and self.games[channel_id].game_started
 
     @Plugin.command('getstory')
-    def command_get_story(self,event):
+    def command_get_story(self, event):
         if self.verify_game_exists_and_running(event.msg.channel_id):
             print(self.games[event.msg.channel_id]._get_story())
-            event.msg.reply(self.games[event.msg.channel_id]._get_story())
+            if len(self.games[event.msg.channel_id._get_story]) > 0:
+                event.msg.reply("```{}```".format(
+                    self.games[event.msg.channel_id]._get_story()))
+            else:
+                event.msg.reply("The story has not been created yet!" +
+                                " Create a sentence to start it off.")
         else:
             event.msg.reply("Game not created or started yet!")
 
     @Plugin.command('currentsentence')
-    def command_get_current_sentence(self,event):
+    def command_get_current_sentence(self, event):
         if self.verify_game_exists_and_running(event.msg.channel_id):
-            if len(self.games[event.msg.channel_id]._get_current_sentence()) > 0:
-                event.msg.reply(self.games[event.msg.channel_id]._get_current_sentence())
+            if len(
+                self.games[event.msg.channel_id]
+                    ._get_current_sentence()) > 0:
+                event.msg.reply(
+                    self.games[event.msg.channel_id]._get_current_sentence())
             else:
                 event.msg.reply("The current sentence is empty!")
         else:
             event.msg.reply("Game not created or started yet!")
 
+    @Plugin.command('whoseturn')
+    def command_get_current_turn(self, event):
+        if self.verify_game_exists_and_running(event.msg.channel_id):
+            event.msg.reply(
+                "It is {}'s turn".format(
+                    self.games[event.msg.channel_id]._get_current_turn))
+        else:
+            event.msg.reply("Game not created or started yet!")
 
 

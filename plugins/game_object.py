@@ -34,6 +34,7 @@ class WordGameObject:
 
     def _add_player(self, user):
         self.playing.append(user)
+        self.turn_queue.append(user) #test this: game in session and someone joins partway through
 
     def _count_players(self):
         return len(self.playing)

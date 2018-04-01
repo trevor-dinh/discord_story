@@ -17,6 +17,8 @@ class WordGameObject:
         self.game_started = False
         self.maximum_sentences = maximum_sentences
         self.turn_queue = []
+    def _get_sentence_count(self):
+        return len(self.story)
 
     def _get_max_players(self):
         return self.max_players

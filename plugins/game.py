@@ -25,10 +25,7 @@ class WordStoryGame(Plugin):
 
     @Plugin.command('joingame')
     def command_join_game(self, event):
-        if event.msg.channel_id not in self.games:
-            event.msg.reply(
-                "No game in this channel created yet! Try using !newgame")
-        else:
+        if self.verify_game_exists(event.msg.channel_id):
             this_game = self.games[event.msg.channel_id]
             maximum = this_game._get_max_players()
             if this_game._count_players() == maximum:
@@ -51,10 +48,13 @@ class WordStoryGame(Plugin):
                     event.msg.reply(
                         "{}, you already signed up for this game!".format(
                             event.msg.author.mention))
+        else:
+            event.msg.reply(
+                "No game in this channel created yet! Try using !newgame")
 
     @Plugin.command('startgame')
     def command_start_game(self, event):
-        if event.msg.channel_id not in self.games:
+        if not self.verify_game_exists_and_running(event.msg.channel_id):
             event.msg.reply(
                 "A game for this channel has not been created yet." +
                 "Try using !newgame")
@@ -81,30 +81,34 @@ class WordStoryGame(Plugin):
 
     @Plugin.command('word', '<content:str>')
     def command_enter_word(self, event, content):
-        if event.msg.channel_id not in self.games:
-            event.msg.reply("No game made for this channel!")
-            return
-        this_game = self.games[event.msg.channel_id]
+        if self.verify_game_exists_and_running(event.msg.channel_id):
+            this_game = self.games[event.msg.channel_id]
 
-        if not this_game.game_started:
-            event.msg.reply("The game hasn't started yet!")
-
-        if this_game.current_turn != event.msg.author:
-            event.msg.reply("It's not your turn, {}".format(
-                event.msg.author.mention))
+            if this_game.current_turn != event.msg.author:
+                event.msg.reply("It's not your turn, {}".format(
+                    event.msg.author.mention))
+            else:
+                this_game.current_sentence.append(content)
+                print("MSG CONTENT TYPE IS {}".format(type(content)))
+                if content[-1] == '.':
+                    this_game.story.append(
+                        ' '.join(word for word in this_game.current_sentence))
+                    print(this_game.story)
+                    this_game._clear_current_sentence()
+                    #handle when story has 64 sentences
+                    if (len(this_game._get_sentence_count()) ==
+                            this_game.maximum_sentences):
+                        event.msg.reply("Finished!")
+                        event.msg.reply("Final story: ```{}```"
+                                        .format(this_game.get_story()))
+                        event.msg.reply("Thanks for playing!")
+                        del self.games[event.msg.channel_id]
+                this_game._change_turn()
+                event.msg.reply("It's now your turn, {}".format(
+                    this_game._get_current_turn().mention))
         else:
-            this_game.current_sentence.append(content)
-            print("MSG CONTENT TYPE IS {}".format(type(content)))
-            if content[-1] == '.':
-                this_game.story.append(
-                    ' '.join(word for word in this_game.current_sentence))
-                print(this_game.story)
-                this_game._clear_current_sentence()
-                #handle when story has 64 sentences
-
-            this_game._change_turn()
-            event.msg.reply("It's now your turn, {}".format(
-                this_game._get_current_turn().mention))
+            event.msg.reply(
+                "You have not created a game that has started yet.")
 
     @Plugin.command('playerorder')
     def command_get_turn_order(self, event):
@@ -150,12 +154,45 @@ class WordStoryGame(Plugin):
         if self.verify_game_exists_and_running(event.msg.channel_id):
             event.msg.reply(
                 "It is {}'s turn".format(
-                    self.games[event.msg.channel_id]._get_current_turn))
+                    self.games[event.msg.channel_id]
+                        ._get_current_turn.mention))
         else:
             event.msg.reply("Game not created or started yet!")
 
+    @Plugin.command('leavegame')
+    def command_leave_game(self, event):
+        event.msg.reply("You can't leave! Blame the devs (for now)")
+
+    @Plugin.command('endgame')
+    def command_end_game(self, event):
+        event.msg.reply("You can't end the game! Blame the devs (for now)")
+
     @Plugin.command('help')
-    def command_help(self,event):
-        event.msg.reply("Can't help rn, devs are stupid")
+    def command_help(self, event):
+        format_string = "{:<30} {:>15}"
+        newgame_string = format_string.format(
+            "newgame", "Creates a new game")
+        joingame_string = format_string.format(
+            "joingame", "Joins a game in the channel you are in")
+        startgame_string = format_string.format(
+            "startgame", "Starts the game if there are enough players")
+        listplayers_string = format_string.format(
+            "listplayers", "Lists players that have joined")
+        word_string = format_string.format(
+            "word <text>", "Inputs your word into the story if it's your turn")
+        playerorder_string = format_string.format(
+            "playerorder", "Lists the turn order of players")
+        story_string = format_string.format(
+            "getstory", "Outputs the current story so far")
+        sentence_string = format_string.format(
+            "currentsentence", "Outputs current sentence so far")
+        whoseturn_string = format_string.format(
+            "whoseturn", "Outputs whose turn it is")
+
+        help_string = "```{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}```".format(
+            newgame_string, joingame_string, startgame_string,
+            listplayers_string, word_string, playerorder_string,
+            story_string, sentence_string, whoseturn_string)
+        event.msg.reply(help_string)
 
 

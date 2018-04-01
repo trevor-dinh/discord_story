@@ -7,7 +7,7 @@ class WordGameObject:
         self.channel_name = channel_name
         self.playing = []
         self.story = []
-        self.current_sentence = ""
+        self.current_sentence = []
         self.current_turn = None
         self.can_join_during_game = can_join_during_game
         self.game_started = False
@@ -24,10 +24,10 @@ class WordGameObject:
         return self.playing
 
     def _get_story(self):
-        return self.story
+        return ' '.join(word for word in (self.story))
 
     def _get_current_sentence(self):
-        return self.current_sentence
+        return ' '.join(word for word in self.current_sentence)
 
     def _get_current_turn(self):
         return self.current_turn
@@ -46,6 +46,9 @@ class WordGameObject:
         if self.game_started:
             self.current_turn = self.turn_queue.pop(0)
             self.turn_queue.append(self.current_turn)
+
+    def _clear_current_sentence(self):
+        self.current_sentence = []
 
 
     def __str__(self):

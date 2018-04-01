@@ -1,7 +1,11 @@
 from disco.bot import Plugin
 
+
 class WordGameObject:
-    def __init__(self, channel_id, channel_name, max_players=4, maximum_sentences=64, can_join_during_game=True):
+    def __init__(self, channel_id, channel_name,
+                 max_players=4, maximum_sentences=5,
+                 can_join_during_game=True):
+        #change max_sentences later
         self.max_players = max_players
         self.channel_id = channel_id
         self.channel_name = channel_name
@@ -34,7 +38,9 @@ class WordGameObject:
 
     def _add_player(self, user):
         self.playing.append(user)
-        self.turn_queue.append(user) #test this: game in session and someone joins partway through
+        if self.game_started and self.can_join_during_game:
+            self.turn_queue.append(user) 
+        #test this: game in session and someone joins partway through
 
     def _count_players(self):
         return len(self.playing)

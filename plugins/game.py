@@ -154,4 +154,8 @@ class WordStoryGame(Plugin):
         else:
             event.msg.reply("Game not created or started yet!")
 
+    @Plugin.command('help')
+    def command_help(self,event):
+        event.msg.reply("Can't help rn, devs are stupid")
+
 

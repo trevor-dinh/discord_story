@@ -40,8 +40,10 @@ class WordGameObject:
 
     def _add_player(self, user):
         self.playing.append(user)
-        if self.game_started and self.can_join_during_game:
-            self.turn_queue.append(user) 
+        print("Players playing within object: {}".format(self.playing))
+        print("Turn order now: {}".format(self.turn_queue))
+        #if self.game_started and self.can_join_during_game:
+            #self.turn_queue.append(user) 
         #test this: game in session and someone joins partway through
 
     def _count_players(self):

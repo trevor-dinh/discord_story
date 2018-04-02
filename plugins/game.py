@@ -54,7 +54,7 @@ class WordStoryGame(Plugin):
 
     @Plugin.command('startgame')
     def command_start_game(self, event):
-        if not self.verify_game_exists_and_running(event.msg.channel_id):
+        if not self.verify_game_exists(event.msg.channel_id):
             event.msg.reply(
                 "A game for this channel has not been created yet." +
                 "Try using !newgame")
@@ -79,7 +79,7 @@ class WordStoryGame(Plugin):
         else:
             event.msg.reply("No game created for this channel!")
 
-    @Plugin.command('word', '<content:str>')
+    @Plugin.command('word', '<content:str>') #handle when sentence not complete
     def command_enter_word(self, event, content):
         if self.verify_game_exists_and_running(event.msg.channel_id):
             this_game = self.games[event.msg.channel_id]
@@ -93,16 +93,17 @@ class WordStoryGame(Plugin):
                 if content[-1] == '.':
                     this_game.story.append(
                         ' '.join(word for word in this_game.current_sentence))
-                    print(this_game.story)
+                    print("within !word, the story is", this_game.story)
                     this_game._clear_current_sentence()
                     #handle when story has 64 sentences
-                    if (len(this_game._get_sentence_count()) ==
+                    if (this_game._get_sentence_count() ==
                             this_game.maximum_sentences):
                         event.msg.reply("Finished!")
                         event.msg.reply("Final story: ```{}```"
-                                        .format(this_game.get_story()))
+                                        .format(this_game._get_story()))
                         event.msg.reply("Thanks for playing!")
                         del self.games[event.msg.channel_id]
+                        return
                 this_game._change_turn()
                 event.msg.reply("It's now your turn, {}".format(
                     this_game._get_current_turn().mention))
@@ -126,8 +127,9 @@ class WordStoryGame(Plugin):
     @Plugin.command('getstory')
     def command_get_story(self, event):
         if self.verify_game_exists_and_running(event.msg.channel_id):
-            print(self.games[event.msg.channel_id]._get_story())
-            if len(self.games[event.msg.channel_id._get_story]) > 0:
+            print("!getstory {}".format(
+                self.games[event.msg.channel_id]._get_story()))
+            if len(self.games[event.msg.channel_id]._get_story()) > 0:
                 event.msg.reply("```{}```".format(
                     self.games[event.msg.channel_id]._get_story()))
             else:
@@ -138,7 +140,10 @@ class WordStoryGame(Plugin):
 
     @Plugin.command('currentsentence')
     def command_get_current_sentence(self, event):
+   
         if self.verify_game_exists_and_running(event.msg.channel_id):
+            this_game = self.games[event.msg.channel_id]
+            print("!currentsentence: ```{}```".format(this_game.current_sentence))
             if len(
                 self.games[event.msg.channel_id]
                     ._get_current_sentence()) > 0:
@@ -155,7 +160,7 @@ class WordStoryGame(Plugin):
             event.msg.reply(
                 "It is {}'s turn".format(
                     self.games[event.msg.channel_id]
-                        ._get_current_turn.mention))
+                        ._get_current_turn().mention))
         else:
             event.msg.reply("Game not created or started yet!")
 
@@ -188,11 +193,18 @@ class WordStoryGame(Plugin):
             "currentsentence", "Outputs current sentence so far")
         whoseturn_string = format_string.format(
             "whoseturn", "Outputs whose turn it is")
+        resetall_string = format_string.format(
+            "resetall", "Deletes ALL games across ALL channels! BE CAREFUL!")
 
         help_string = "```{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}```".format(
             newgame_string, joingame_string, startgame_string,
             listplayers_string, word_string, playerorder_string,
             story_string, sentence_string, whoseturn_string)
         event.msg.reply(help_string)
+
+    @Plugin.command('resetall')
+    def command_help(self,event):
+        event.msg.reply("Resetting all instances")
+        self.load(ctx)
 
 

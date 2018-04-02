@@ -172,8 +172,14 @@ class WordStoryGame(Plugin):
     def command_end_game(self, event):
         event.msg.reply("You can't end the game! Blame the devs (for now)")
 
+    @Plugin.command('resetall')
+    def command_reset_all(self, event):
+        event.msg.reply("Resetting ALL games across ALL channels")
+        self.games = {}
+
     @Plugin.command('help')
     def command_help(self, event):
+        print("Called help")
         format_string = "{:<30} {:>15}"
         newgame_string = format_string.format(
             "newgame", "Creates a new game")
@@ -196,15 +202,11 @@ class WordStoryGame(Plugin):
         resetall_string = format_string.format(
             "resetall", "Deletes ALL games across ALL channels! BE CAREFUL!")
 
-        help_string = "```{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}```".format(
+        help_string = "```{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}```".format(
             newgame_string, joingame_string, startgame_string,
             listplayers_string, word_string, playerorder_string,
-            story_string, sentence_string, whoseturn_string)
+            story_string, sentence_string, whoseturn_string,
+            resetall_string)
         event.msg.reply(help_string)
-
-    @Plugin.command('resetall')
-    def command_help(self,event):
-        event.msg.reply("Resetting all instances")
-        self.load(ctx)
 
 

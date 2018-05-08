@@ -7,13 +7,21 @@ A config.json file is needed to run the bot, but I did not provide it because it
 The bot provides the implementation of a game where participating users on a server input one word each in a given text server. The goal of the game is to construct a story from user messages. After a certain number of sentences,  the game ends and everyone gets to read the story they've created. 
 
 A (rudimentary) example of the game:
+
 User1: The
+
 User2: quick
+
 User3: fox
+
 User4: jumped
+
 User5: over
+
 User6: the
+
 User7: lazy
+
 User1: dog.
 
 All commands are listed using the !help command. 

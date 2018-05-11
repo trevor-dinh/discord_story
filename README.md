@@ -1,7 +1,5 @@
 # Tell me a story, Discord.
-Discord bot developed for LAHacks.
-
-A config.json file is needed to run the bot, but I did not provide it because it had a secret key.
+Discord message bot developed for LAHacks 2018.
 
 # What does the bot do?
 The bot provides the implementation of a game where participating users on a server input one word each in a given text server. The goal of the game is to construct a story from user messages. After a certain number of sentences,  the game ends and everyone gets to read the story they've created. 
